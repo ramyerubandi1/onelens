@@ -1,0 +1,279 @@
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+clusterName: "cluster.local"
+
+loglevel: info
+
+plugins:
+  enabled: false
+  install:
+    enabled: true
+    fullImageName: curlimages/curl:latest
+    securityContext:
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
+  folder: /opt/opencost/plugin
+  configs:
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+  automountServiceAccountToken: true
+
+networkPolicies:
+  enabled: false
+
+  prometheus:
+    namespace: prometheus-system
+    port: 9090
+    labels:
+      app.kubernetes.io/name: prometheus
+
+  extraEgress: []
+
+updateStrategy:
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+  type: RollingUpdate
+annotations: {}
+podAnnotations: {}
+secretAnnotations: {}
+podLabels: {}
+priorityClassName: ~
+
+podSecurityContext: {}
+
+service:
+  enabled: true
+  annotations: {}
+  labels: {}
+  type: LoadBalancer
+  nodePort: {}
+  extraPorts: []
+  loadBalancerSourceRanges: []
+
+rbac:
+  enabled: true
+
+opencost:
+  cloudIntegrationSecret: ""
+  exporter:
+    apiPort: 9003
+    cloudProviderApiKey: ""
+    defaultClusterId: 'default-cluster'
+    image:
+      registry: ghcr.io
+      repository: opencost/opencost
+      tag: "1.113.0@sha256:b313d6d320058bbd3841a948fb636182f49b46df2368d91e2ae046ed03c0f83c"
+      pullPolicy: IfNotPresent
+      fullImageName: null
+    extraArgs: []
+    replicas: 1
+    resources:
+      requests:
+        cpu: '10m'
+        memory: '55Mi'
+      limits:
+        cpu: '999m'
+        memory: '1Gi'
+    startupProbe:
+      enabled: true
+      path: /healthz
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      failureThreshold: 30
+    livenessProbe:
+      enabled: true
+      path: /healthz
+      initialDelaySeconds: 10
+      periodSeconds: 20
+      failureThreshold: 3
+    readinessProbe:
+      enabled: true
+      path: /healthz
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      failureThreshold: 3
+    securityContext: {}
+
+    csv_path: ""
+
+    persistence:
+      enabled: false
+      annotations: {}
+      accessMode: ""
+      storageClass: ""
+      size: ""
+
+    aws:
+      secret_access_key: ""
+      access_key_id: ""
+    extraVolumeMounts: []
+    env: []
+    extraEnv: {}
+  customPricing:
+    enabled: false
+    configmapName: custom-pricing-model
+    configPath: /tmp/custom-config
+    createConfigmap: true
+    provider: custom
+    costModel:
+      description: Modified pricing configuration.
+      CPU: 1.25
+      spotCPU: 0.006655
+      RAM: 0.50
+      spotRAM: 0.000892
+      GPU: 0.95
+      storage: 0.25
+      zoneNetworkEgress: 0.01
+      regionNetworkEgress: 0.01
+      internetNetworkEgress: 0.12
+
+  dataRetention:
+    dailyResolutionDays: 15
+
+  carbonCost:
+    enabled: false
+
+  cloudCost:
+    enabled: false
+    refreshRateHours: 6
+    runWindowDays: 3
+    monthToDateInterval: 6
+    queryWindowDays: 7
+
+
+  metrics:
+    kubeStateMetrics:
+      emitPodAnnotations: ~
+      emitNamespaceAnnotations: ~
+      emitKsmV1Metrics: ~
+      emitKsmV1MetricsOnly: ~
+
+    serviceMonitor:
+      enabled: false
+      additionalLabels: {}
+      namespace: ""
+      scrapeInterval: 30s
+      scrapeTimeout: 10s
+      honorLabels: true
+      relabelings: []
+      metricRelabelings: []
+      extraEndpoints: []
+      scheme: http
+      tlsConfig: {}
+
+    config:
+      enabled: false
+      configmapName: custom-metrics
+      disabledMetrics: []
+
+  prometheus:
+    secret_name: ~
+    existingSecretName: ~
+    username: ""
+    username_key: DB_BASIC_AUTH_USERNAME
+    password: ""
+    password_key: DB_BASIC_AUTH_PW
+    bearer_token: ""
+    bearer_token_key: DB_BEARER_TOKEN
+    kubeRBACProxy: false
+    createMonitoringClusterRoleBinding: false
+    createMonitoringResourceReaderRoleBinding: false
+    monitoringServiceAccountName: prometheus-k8s
+    monitoringServiceAccountNamespace: openshift-monitoring
+    external:
+      enabled: false
+      url: "http://a7e9cf0d841d7448e849bea4c1b9cb7f-1628515861.ap-south-1.elb.amazonaws.com:9090/"
+    internal:
+      enabled: true
+      serviceName: prometheus-kube-prometheus-prometheus
+      namespaceName: onelens
+      port: 9090
+    amp:
+      workspaceId: ""
+    thanos:
+      enabled: false
+      queryOffset: ''
+      maxSourceResolution: ''
+      internal:
+        enabled: true
+        serviceName: my-thanos-query
+        namespaceName: opencost
+        port: 10901
+      external:
+        enabled: false
+        url: 'https://thanos-query.example.com/thanos'
+
+  ui:
+    enabled: true
+    image:
+      registry: ghcr.io
+      repository: opencost/opencost-ui
+      tag: "1.113.0@sha256:4f408cf765217f889f4cb5cfcc97356e09892045a6ec951b27817a42ecb6748d"
+      pullPolicy: IfNotPresent
+      fullImageName: null
+    resources:
+      requests:
+        cpu: '10m'
+        memory: '55Mi'
+      limits:
+        cpu: '999m'
+        memory: '1Gi'
+    uiPort: 9090
+    livenessProbe:
+      enabled: true
+      path: /healthz
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 3
+    readinessProbe:
+      enabled: true
+      path: /healthz
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 3
+    securityContext: {}
+
+    extraEnv: []
+
+    extraVolumeMounts: []
+
+    ingress:
+      enabled: false
+      ingressClassName: ""
+      annotations: {}
+      hosts:
+        - host: example.local
+          paths:
+            - /
+      servicePort: http-ui
+      tls: []
+
+  sigV4Proxy:
+    image: public.ecr.aws/aws-observability/aws-sigv4-proxy:latest
+    imagePullPolicy: IfNotPresent
+    name: aps
+    port: 8005
+    resources: {}
+    securityContext: {}
+  tolerations: []
+  nodeSelector: {}
+  affinity: {}
+  topologySpreadConstraints: []
+
+  extraContainers: []
+
+extraVolumes: []
