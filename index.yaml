@@ -1,18 +1,105 @@
 apiVersion: v1
 entries:
-  prometheus:
-  - apiVersion: v2
-    appVersion: "2.26.0"
-    created: "2021-06-14T15:02:16.067331721Z"
-    description: Prometheus is a monitoring system and time series database.
-    digest: e58e6e8d740bc97c2bb0d08ef3a39c1b69b5d567490c424cf798a0a8c2068b84
-    home: https://prometheus.io
-    icon: https://prometheus.io/assets/logo/prometheus/Prometheus_logo_lockup.svg
-    name: prometheus
+  kube-prometheus-stack:
+  - annotations:
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/prometheus-community/helm-charts
+        - name: Upstream Project
+          url: https://github.com/prometheus-operator/kube-prometheus
+      artifacthub.io/operator: "true"
+    apiVersion: v2
+    appVersion: v0.79.2
+    created: "2025-01-23T07:02:17.815198046Z"
+    dependencies:
+    - condition: crds.enabled
+      name: crds
+      repository: ""
+      version: 0.0.0
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 5.28.*
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.43.*
+    - condition: grafana.enabled
+      name: grafana
+      repository: https://grafana.github.io/helm-charts
+      version: 8.8.*
+    - condition: windowsMonitoring.enabled
+      name: prometheus-windows-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 0.7.*
+    description: kube-prometheus-stack collects Kubernetes manifests, Grafana dashboards,
+      and Prometheus rules combined with documentation and scripts to provide easy
+      to operate end-to-end Kubernetes cluster monitoring with Prometheus using the
+      Prometheus Operator.
+    digest: da2433e99c753b49c2e1deac50e2a685e4b23a852a00af674e7dce22035c427e
+    home: https://github.com/prometheus-operator/kube-prometheus
+    icon: https://raw.githubusercontent.com/prometheus/prometheus.github.io/master/assets/prometheus_logo-cb55bb5c346.png
+    keywords:
+    - operator
+    - prometheus
+    - kube-prometheus
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: andrew@quadcorps.co.uk
+      name: andrewgkew
+      url: https://github.com/andrewgkew
+    - email: gianrubio@gmail.com
+      name: gianrubio
+      url: https://github.com/gianrubio
+    - email: github.gkarthiks@gmail.com
+      name: gkarthiks
+      url: https://github.com/gkarthiks
+    - email: kube-prometheus-stack@sisti.pt
+      name: GMartinez-Sisti
+      url: https://github.com/GMartinez-Sisti
+    - email: github@jkroepke.de
+      name: Jan-Otto Kröpke
+      url: https://github.com/jkroepke
+    - email: scott@r6by.com
+      name: scottrigby
+      url: https://github.com/scottrigby
+    - email: miroslav.hadzhiev@gmail.com
+      name: Xtigyro
+      url: https://github.com/Xtigyro
+    - email: quentin.bisson@gmail.com
+      name: QuentinBisson
+      url: https://github.com/QuentinBisson
+    name: kube-prometheus-stack
+    sources:
+    - https://github.com/prometheus-community/helm-charts
+    - https://github.com/prometheus-operator/kube-prometheus
+    type: application
     urls:
-    - charts/prometheus-1.0.0.tgz
-    version: 1.0.0
-    versionList:
-    - "1.0.0"
-generated: "2023-01-23T16:42:52.670570697Z"
-
+    - https://ramyerubandi1.github.io/onelens/charts/kube-prometheus-stack-68.3.0.tgz
+    version: 68.3.0
+  opencost:
+  - apiVersion: v2
+    appVersion: 1.113.0
+    created: "2025-01-23T07:02:17.816802418Z"
+    description: OpenCost and OpenCost UI
+    digest: f0eef0d11974cadbddfeb75d71e33f054fe04843f8e320c13e0b57cb8cf10fbc
+    home: https://github.com/opencost/opencost-helm-chart
+    keywords:
+    - cloud-costs
+    - cost-optimization
+    - finops
+    - monitoring
+    - opencost
+    maintainers:
+    - name: mattray
+      url: https://mattray.dev
+    - name: toscott
+    - email: rafa@stormforge.io
+      name: brito-rafa
+    name: opencost
+    type: application
+    urls:
+    - https://ramyerubandi1.github.io/onelens/charts/opencost-1.43.2.tgz
+    version: 1.43.2
+generated: "2025-01-23T07:02:17.767740504Z"
