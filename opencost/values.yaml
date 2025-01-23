@@ -57,12 +57,17 @@ podSecurityContext: {}
 
 service:
   enabled: true
-  annotations: {}
-  labels: {}
   type: LoadBalancer
-  nodePort: {}
-  extraPorts: []
-  loadBalancerSourceRanges: []
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "HTTP"
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+  ports:
+    - name: http
+      port: 80              # External port on LoadBalancer
+      targetPort: 9090      # Internal port (your application's port)
+      protocol: TCP
+
+
 
 rbac:
   enabled: true

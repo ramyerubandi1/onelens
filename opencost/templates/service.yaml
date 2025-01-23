@@ -25,12 +25,13 @@ spec:
   {{- end }}
   ports:
     - name: http
-      port: {{ .Values.opencost.exporter.apiPort }}
-      targetPort: {{ .Values.opencost.exporter.apiPort }}
+      port: 80                # External port on LoadBalancer
+      targetPort: 9090        # Internal port (application port for UI/API)
+      protocol: TCP
     {{- if .Values.opencost.ui.enabled }}
     - name: http-ui
-      port: {{ .Values.opencost.ui.uiPort }}
-      targetPort: {{ .Values.opencost.ui.uiPort }}
+      port: 80                # External UI port for LoadBalancer
+      targetPort: 9090        # Internal UI port
       {{- if (eq .Values.service.type "NodePort") }}
         {{- if .Values.service.nodePort }}
       nodePort: {{ .Values.service.nodePort }}
@@ -46,3 +47,4 @@ spec:
       {{- toYaml . | nindent 4 }}
     {{- end }}
 {{- end }}
+
