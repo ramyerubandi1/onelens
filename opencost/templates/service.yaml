@@ -10,38 +10,31 @@ metadata:
       {{- toYaml . | nindent 4 }}
     {{- end }}
   {{- with .Values.service.annotations }}
-  annotations: {{- toYaml . | nindent 4 }}
+  annotations: 
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  selector: {{- include "opencost.selectorLabels" . | nindent 4 }}
-  {{- if and .Values.service .Values.service.type }}
-  type: "{{ .Values.service.type }}"
-  {{- end }}
-  {{- if (eq .Values.service.type "LoadBalancer") }}
-    {{- if .Values.service.loadBalancerSourceRanges }}
+  selector:
+    {{- include "opencost.selectorLabels" . | nindent 4 }}
+  type: LoadBalancer
+  {{- if .Values.service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
-    {{ toYaml .Values.service.loadBalancerSourceRanges | indent 4 }}
-    {{- end -}}
+    {{- toYaml .Values.service.loadBalancerSourceRanges | nindent 4 }}
   {{- end }}
   ports:
     - name: http
-      port: 80                # External port on LoadBalancer
+      port: 80                # External port on the LoadBalancer
       targetPort: 9090        # Internal port (application port for UI/API)
       protocol: TCP
-    {{- if .Values.opencost.ui.enabled }}
     - name: http-ui
-      port: 80                # External UI port for LoadBalancer
+      port: 81                # External port for UI
       targetPort: 9090        # Internal UI port
-      {{- if (eq .Values.service.type "NodePort") }}
-        {{- if .Values.service.nodePort }}
-      nodePort: {{ .Values.service.nodePort }}
-        {{- end }}
-      {{- end }}
-    {{- end }}
+      protocol: TCP
     {{- if .Values.opencost.exporter.debugPort }}
     - name: debug-port
       port: {{ .Values.opencost.exporter.debugPort }}
       targetPort: {{ .Values.opencost.debugPort }}
+      protocol: TCP
     {{- end }}
     {{- with .Values.service.extraPorts }}
       {{- toYaml . | nindent 4 }}
