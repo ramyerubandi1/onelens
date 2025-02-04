@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::122610479416:oidc-provider/oidc.eks.ap-south-1.amazonaws.com/id/64500238598412FA89B46304A11EF268"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.ap-south-1.amazonaws.com/id/64500238598412FA89B46304A11EF268:sub": "system:serviceaccount:onelens:steampipe"
+        }
+      }
+    }
+  ]
+}
+
